@@ -1,0 +1,17 @@
+[Unit]
+Description=System Monitoring Agent
+Documentation=https://github.com/yourname/monitoring-agent
+After=network.target syslog.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/bin/monitoring-agent --config /etc/monitoring-agent/config.yaml
+Restart=on-failure
+RestartSec=5s
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=monitoring-agent
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,30 @@
+# Monitoring Agent configuration.
+# Copy from config.yaml.example and adjust values as needed for your machine.
+
+agent:
+  interval_seconds: 60
+
+collectors:
+  cpu: true
+  memory: true
+  disk: true
+  network: true
+
+watch_paths:
+  - path: /var/log
+    recursive: true
+  - path: /etc/monitoring-agent
+    recursive: false
+
+thresholds:
+  cpu_percent: 80
+  memory_percent: 85
+  disk_percent: 90
+
+logging:
+  log_file: /var/log/monitoring-agent/agent.log
+  max_bytes: 10485760
+  backup_count: 5
+  syslog: false
+  syslog_address: /dev/log
+  level: INFO

@@ -1,0 +1,48 @@
+# Monitoring Agent reference configuration.
+# Copy this file to /etc/monitoring-agent/config.yaml and adjust values as needed.
+
+agent:
+  # Number of seconds between metric collection cycles.
+  interval_seconds: 60
+
+collectors:
+  # Enable or disable CPU metric collection.
+  cpu: true
+  # Enable or disable memory metric collection.
+  memory: true
+  # Enable or disable disk metric collection.
+  disk: true
+  # Enable or disable network metric collection.
+  network: true
+
+watch_paths:
+  # List of filesystem locations to watch for changes.
+  # Each entry supports a path and an optional recursive flag.
+  - path: /var/log
+    # When true, watch all subdirectories under the path.
+    recursive: true
+  - path: /etc/monitoring-agent
+    # When false, only the top-level directory is watched.
+    recursive: false
+
+thresholds:
+  # Warn when CPU usage exceeds this percentage.
+  cpu_percent: 80
+  # Warn when memory usage exceeds this percentage.
+  memory_percent: 85
+  # Warn when disk usage exceeds this percentage.
+  disk_percent: 90
+
+logging:
+  # Path to the rotating log file written by the agent.
+  log_file: /var/log/monitoring-agent/agent.log
+  # Maximum size of the active log file before rotation, in bytes.
+  max_bytes: 10485760
+  # Number of rotated backup log files to keep.
+  backup_count: 5
+  # Enable writing to syslog in addition to the log file.
+  syslog: false
+  # Syslog socket path or host/port tuple used when syslog is enabled.
+  syslog_address: /dev/log
+  # Log level for the agent logger.
+  level: INFO
