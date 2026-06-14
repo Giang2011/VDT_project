@@ -12,6 +12,16 @@ class PrefixFilter(logging.Filter):
         return record.getMessage().startswith(self.prefix)
 
 
+class ExcludePrefixesFilter(logging.Filter):
+    def __init__(self, prefixes: tuple[str, ...]):
+        super().__init__()
+        self.prefixes = prefixes
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        message = record.getMessage()
+        return not any(message.startswith(prefix) for prefix in self.prefixes)
+
+
 def _build_handler(log_file: str, max_bytes: int, backup_count: int, formatter: logging.Formatter, prefix: str | None = None) -> RotatingFileHandler:
     os.makedirs(os.path.dirname(log_file), exist_ok=True)
     handler = RotatingFileHandler(filename=log_file, maxBytes=max_bytes, backupCount=backup_count)
@@ -33,14 +43,13 @@ def setup(cfg: dict) -> logging.Logger:
     max_bytes = log_cfg.get("max_bytes", 10_485_760)
     backup_count = log_cfg.get("backup_count", 5)
 
-    base_log = log_cfg.get("log_file", "/var/log/monitoring-agent/agent.log")
-    logger.addHandler(_build_handler(base_log, max_bytes, backup_count, formatter))
-
     per_collector = log_cfg.get("collector_logs", {})
+    collector_prefixes = []
     for name in ("cpu", "memory", "disk", "network", "alerts", "fs"):
         cfg_item = per_collector.get(name, {})
         if not cfg_item.get("enabled", True):
             continue
+        collector_prefixes.append(f"[{name.upper()}]")
         logger.addHandler(
             _build_handler(
                 cfg_item.get("log_file", f"/var/log/monitoring-agent/{name}/{name}.log"),
@@ -50,6 +59,12 @@ def setup(cfg: dict) -> logging.Logger:
                 prefix=f"[{name.upper()}]",
             )
         )
+
+    base_log = log_cfg.get("log_file", "/var/log/monitoring-agent/agent.log")
+    agent_handler = _build_handler(base_log, max_bytes, backup_count, formatter)
+    if collector_prefixes:
+        agent_handler.addFilter(ExcludePrefixesFilter(tuple(collector_prefixes)))
+    logger.addHandler(agent_handler)
 
     if log_cfg.get("syslog", False):
         syslog_address = log_cfg.get("syslog_address", "/dev/log")
