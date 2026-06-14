@@ -37,8 +37,36 @@ def main():
     while True:
         try:
             metrics = collect_all(cfg)
-            metric_str = " ".join(f"{k}={v}" for k, v in metrics.items())
-            log.info(f"[METRICS] {metric_str}")
+
+            cpu_items = []
+            memory_items = []
+            disk_items = []
+            network_items = []
+            other_items = []
+
+            for key, value in metrics.items():
+                if key.startswith("cpu_"):
+                    cpu_items.append(f"{key}={value}")
+                elif key.startswith("mem_"):
+                    memory_items.append(f"{key}={value}")
+                elif key.startswith("disk_"):
+                    disk_items.append(f"{key}={value}")
+                elif key.startswith("net_"):
+                    network_items.append(f"{key}={value}")
+                else:
+                    other_items.append(f"{key}={value}")
+
+            if cpu_items:
+                log.info(f"[CPU] {' '.join(cpu_items)}")
+            if memory_items:
+                log.info(f"[MEMORY] {' '.join(memory_items)}")
+            if disk_items:
+                log.info(f"[DISK] {' '.join(disk_items)}")
+            if network_items:
+                log.info(f"[NETWORK] {' '.join(network_items)}")
+            if other_items:
+                log.info(f"[METRICS] {' '.join(other_items)}")
+
             alerter.check(metrics, cfg.get("thresholds", {}), log)
         except Exception as exc:
             log.error(f"[AGENT] Collection error: {exc}")
