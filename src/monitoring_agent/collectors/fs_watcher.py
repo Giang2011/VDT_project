@@ -1,4 +1,5 @@
 import logging
+import os
 
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
@@ -23,6 +24,12 @@ def start_watchers(watch_paths: list, logger: logging.Logger) -> Observer:
     for entry in watch_paths:
         path = entry.get("path", "")
         recursive = entry.get("recursive", False)
+        if not path:
+            logger.warning("[WATCHER] Skipping empty watch path entry")
+            continue
+        if not os.path.exists(path):
+            logger.warning(f"[WATCHER] Skipping missing path: {path}")
+            continue
         handler = AgentFSHandler(logger)
         observer.schedule(handler, path, recursive=recursive)
         logger.info(f"[WATCHER] Watching: {path} (recursive={recursive})")

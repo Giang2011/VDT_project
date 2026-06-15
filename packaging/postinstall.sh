@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-systemctl daemon-reload
-systemctl enable monitoring-agent
 mkdir -p /var/log/monitoring-agent
+systemctl daemon-reload || true
+systemctl enable monitoring-agent || true
 echo "monitoring-agent installed. Start with: systemctl start monitoring-agent"

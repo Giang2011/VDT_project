@@ -9,7 +9,7 @@ OUTPUT_DIR="$PROJECT_ROOT/dist"
 rm -rf "$BUILD_DIR"
 mkdir -p "$BUILD_DIR/vendor" "$BUILD_DIR/bin" "$OUTPUT_DIR"
 
-pip install --upgrade --no-deps --target="$BUILD_DIR/vendor" "$PROJECT_ROOT"
+pip install --upgrade --target="$BUILD_DIR/vendor" "$PROJECT_ROOT"
 
 cat > "$BUILD_DIR/bin/monitoring-agent" <<'EOF'
 #!/bin/bash

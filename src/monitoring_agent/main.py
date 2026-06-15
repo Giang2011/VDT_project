@@ -25,8 +25,9 @@ def main():
 
     def shutdown(sig, frame):
         log.info("[AGENT] Shutting down...")
-        observer.stop()
-        observer.join()
+        if observer:
+            observer.stop()
+            observer.join(timeout=5)
         sys.exit(0)
 
     signal.signal(signal.SIGTERM, shutdown)
