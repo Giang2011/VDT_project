@@ -6,6 +6,7 @@ After=network.target syslog.target
 [Service]
 Type=simple
 User=root
+Environment=PYTHONPATH=/usr/lib/monitoring-agent/vendor
 ExecStart=/usr/bin/monitoring-agent --config /etc/monitoring-agent/config.yaml
 Restart=on-failure
 RestartSec=5s
