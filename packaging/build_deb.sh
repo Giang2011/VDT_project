@@ -28,7 +28,7 @@ fpm -s dir -t deb \
   --after-remove "$PROJECT_ROOT/packaging/preremove.sh" \
   --deb-no-default-config-files \
   --package "$OUTPUT_DIR/monitoring-agent_${VERSION}_all.deb"\
-  "$BUILD_DIR/lib/=/usr/lib/python3/dist-packages/monitoring_agent" \
+  "$BUILD_DIR/lib/=/usr/lib/python3/dist-packages" \
   "$BUILD_DIR/bin/monitoring-agent=/usr/bin/monitoring-agent" \
   "$PROJECT_ROOT/systemd/monitoring-agent.service=/lib/systemd/system/monitoring-agent.service" \
   "$PROJECT_ROOT/config/config.yaml.example=/etc/monitoring-agent/config.yaml.example" \
